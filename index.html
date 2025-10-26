@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Statistics</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 18px;
+      width: 250px;
+      border: 2px solid #333;
+      border-radius: 5px;
+      text-transform: uppercase; /* Make typed text look uppercase */
+    }
+
+    input::placeholder {
+      text-transform: none; /* Keep placeholder normal */
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <input id="pageInput" type="text" placeholder="Type your ID" />
+  <button id="goBtn">Go</button>
+
+  <script>
+    const input = document.getElementById("pageInput");
+    const button = document.getElementById("goBtn");
+
+    function redirectToPage() {
+      const pageName = input.value.trim();
+      if (!pageName) {
+        alert("Please type a page name!");
+        return;
+      }
+
+      // Convert input to uppercase for URL
+      const pageUrl = pageName.toUpperCase() + ".html";
+
+      // Redirect to the page
+      window.location.href = pageUrl;
+    }
+
+    // Redirect on button click
+    button.addEventListener("click", redirectToPage);
+
+    // Redirect on Enter key press
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        redirectToPage();
+      }
+    });
+  </script>
+</body>
+</html>

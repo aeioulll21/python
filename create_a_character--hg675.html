@@ -76,82 +76,37 @@
 <h1>Create a Character by HG675</h1>
 
 <pre>
-print("Create a character!")
-name = input("What is your character called? ")
-age = input(f"How old is {name}? ")
-strengths = input(f"What are {name}'s strengths? ")
-weaknesses = input(f"What are {name}'s weaknesses? ")
-print(f"Your character's name is {name}.")
-print(f"{name} is {age} years old.")
-print(f"Strengths: {strengths}.")
-print(f"Weaknesses: {weaknesses}.")
-print(f"{name} says, 'Thanks for creating me!'")
+// Character creation in JavaScript
 </pre>
 
-<button id="runBtn" disabled>Loading Python...</button>
+<button id="runBtn">Run Code</button>
 <button onclick="window.history.back()">Go back</button>
 
 <h3>Output</h3>
-<pre id="output">Please wait — loading Python environment...</pre>
+<pre id="output">Click "Run Code" to create your character...</pre>
 
-<small>Powered by Pyodide • Themed by HG675</small>
+<small>Themed by HG675 • JavaScript version</small>
 
-<script type="module">
-  import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
+<script>
+const runBtn = document.getElementById("runBtn");
+const output = document.getElementById("output");
 
-  const code = `
-print("Create a character!")
-name = input("What is your character called? ")
-age = input(f"How old is {name}? ")
-strengths = input(f"What are {name}'s strengths? ")
-weaknesses = input(f"What are {name}'s weaknesses? ")
-print(f"Your character's name is {name}.")
-print(f"{name} is {age} years old.")
-print(f"Strengths: {strengths}.")
-print(f"Weaknesses: {weaknesses}.")
-print(f"{name} says, 'Thanks for creating me!'")
-`;
+runBtn.addEventListener("click", () => {
+  output.textContent = ""; // Clear previous output
 
-  const runBtn = document.getElementById("runBtn");
-  const output = document.getElementById("output");
-  let pyodide;
+  output.textContent += "Create a character!\n";
 
-  async function initPyodide() {
-    output.textContent = "Loading Python environment...";
-    pyodide = await loadPyodide();
-    runBtn.textContent = "Run Code";
-    runBtn.disabled = false;
-    output.textContent = "Python ready! Click 'Run Code' to start.";
-  }
+  const name = prompt("What is your character called?");
+  const age = prompt(`How old is ${name}?`);
+  const strengths = prompt(`What are ${name}'s strengths?`);
+  const weaknesses = prompt(`What are ${name}'s weaknesses?`);
 
-  runBtn.addEventListener("click", async () => {
-    output.textContent = "";
-
-    // Define a Python-compatible input() hook using JS prompt()
-    const pythonInput = `
-import builtins
-def js_input(prompt_msg=""):
-    from js import prompt
-    response = prompt(prompt_msg)
-    if response is None:
-        response = ""
-    return response
-builtins.input = js_input
-`;
-
-    try {
-      pyodide.setStdout({ write: s => output.textContent += s });
-      pyodide.setStderr({ write: s => output.textContent += s });
-      
-      // Inject our custom input() before running the main code
-      await pyodide.runPythonAsync(pythonInput);
-      await pyodide.runPythonAsync(code);
-    } catch (err) {
-      output.textContent += "\nError:\n" + err;
-    }
-  });
-
-  initPyodide();
+  output.textContent += `\nYour character's name is ${name}.\n`;
+  output.textContent += `${name} is ${age} years old.\n`;
+  output.textContent += `Strengths: ${strengths}.\n`;
+  output.textContent += `Weaknesses: ${weaknesses}.\n`;
+  output.textContent += `${name} says, 'Thanks for creating me!'\n`;
+});
 </script>
 
 </body>

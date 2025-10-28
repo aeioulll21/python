@@ -3,61 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create a character by HG65</title>
+<title>Create a Character</title>
 <style>
   body {
-    background-color: #121212;
-    color: #f5f5f5;
-    font-family: monospace;
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
     text-align: center;
+    margin: 0;
     padding: 20px;
   }
+
   h1 {
-    color: #00ff99;
+    color: blue;
+    margin-bottom: 10px;
   }
+
+  h3 {
+    color: purple;
+    margin-top: 30px;
+    margin-bottom: 5px;
+  }
+
   pre {
-    width: 90%;
-    background-color: #1e1e1e;
-    color: #00ff99;
-    border: 1px solid #333;
-    border-radius: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
     padding: 10px;
     text-align: left;
     white-space: pre-wrap;
     word-wrap: break-word;
-    margin: 0 auto;
-  }
-  button {
-    margin-top: 15px;
-    background-color: #00ff99;
+    width: 80%;
+    margin: 10px auto;
     color: #000;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 20px;
+  }
+
+  button {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 5px 10px;
     cursor: pointer;
-    font-weight: bold;
+    font-size: 13px;
   }
+
   button:hover {
-    background-color: #00cc77;
+    background-color: #ddd;
   }
+
   #output {
-    background-color: #1e1e1e;
-    color: #00ff99;
-    border: 1px solid #333;
-    width: 90%;
-    text-align: left;
-    margin: 20px auto;
+    border: 1px solid #ccc;
+    background-color: #fafafa;
+    border-radius: 6px;
     padding: 10px;
-    border-radius: 8px;
+    width: 80%;
+    margin: 15px auto;
+    text-align: left;
     min-height: 80px;
+    font-family: monospace;
+    color: #333;
+  }
+
+  small {
+    display: block;
+    color: #888;
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 
 <h1>Create a character by HG675</h1>
-
-<pre id="codeDisplay">
+<pre>
 print("Create a character!")
 name = input("What is your character called? ")
 age = input(f"How old is {name}? ")
@@ -70,14 +87,21 @@ print(f"Weaknesses: {weaknesses}.")
 print(f"{name} says, 'Thanks for creating me!'")
 </pre>
 
-<button onclick="runPython()">Run Code</button>
+<button id="runBtn" disabled>Loading Python...</button>
+<button onclick="window.history.back()">Go back</button>
 
-<pre id="output">Output will appear here...</pre>
+<h3>Output</h3>
+<pre id="output">Please wait — loading Python environment...</pre>
+
+<small>Powered by Pyodide</small>
 
 <script type="module">
   import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
 
   let pyodide;
+  const runBtn = document.getElementById("runBtn");
+  const output = document.getElementById("output");
+
   const code = `
 print("Create a character!")
 name = input("What is your character called? ")
@@ -91,29 +115,31 @@ print(f"Weaknesses: {weaknesses}.")
 print(f"{name} says, 'Thanks for creating me!'")
 `;
 
-  async function initPyodide() {
-    document.getElementById("output").textContent = "Loading Python environment...";
+  async function main() {
+    output.textContent = "Loading Python environment...";
     pyodide = await loadPyodide();
-    document.getElementById("output").textContent = "Python ready! Click 'Run Code' to start.";
+    output.textContent = "Python ready! Click 'Run Code' to start.";
+    runBtn.textContent = "Run Code";
+    runBtn.disabled = false;
   }
 
-  async function runPython() {
-    const output = document.getElementById("output");
+  runBtn.addEventListener("click", async () => {
     output.textContent = "";
     try {
+      pyodide.setStdout({ write: s => output.textContent += s });
+      pyodide.setStderr({ write: s => output.textContent += s });
       pyodide.setStdin({
         readline() {
           return prompt("Input required:");
         }
       });
-      const result = await pyodide.runPythonAsync(code);
-      if (result !== undefined) output.textContent += result + "\n";
+      await pyodide.runPythonAsync(code);
     } catch (err) {
-      output.textContent = "Error:\n" + err;
+      output.textContent += "\nError:\n" + err;
     }
-  }
+  });
 
-  initPyodide();
+  main();
 </script>
 
 </body>

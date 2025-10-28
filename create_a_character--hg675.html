@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create a Character</title>
+<title>User HG675 — Create a Character</title>
 <style>
   body {
     font-family: "Trebuchet MS", Arial, sans-serif;
     background-color: #fff;
-    color: #333;
+    color: #000;
     text-align: center;
     margin: 0;
     padding: 20px;
@@ -16,39 +16,25 @@
 
   h1 {
     color: blue;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
   h3 {
     color: purple;
-    margin-top: 30px;
+    margin-top: 25px;
     margin-bottom: 5px;
   }
 
   pre {
     background-color: #f9f9f9;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 6px;
     padding: 10px;
-    text-align: left;
-    white-space: pre-wrap;
-    word-wrap: break-word;
     width: 80%;
     margin: 10px auto;
-    color: #000;
-  }
-
-  button {
-    background-color: #eee;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 13px;
-  }
-
-  button:hover {
-    background-color: #ddd;
+    text-align: left;
+    white-space: pre-wrap;
+    font-family: Consolas, monospace;
   }
 
   #output {
@@ -60,13 +46,26 @@
     margin: 15px auto;
     text-align: left;
     min-height: 80px;
-    font-family: monospace;
-    color: #333;
+    font-family: Consolas, monospace;
+  }
+
+  button {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    margin: 5px;
+  }
+
+  button:hover {
+    background-color: #ddd;
   }
 
   small {
-    display: block;
     color: #888;
+    display: block;
     margin-top: 10px;
   }
 </style>
@@ -74,7 +73,6 @@
 <body>
 
 <h1>Create a character by HG675</h1>
-
 <pre>
 print("Create a character!")
 name = input("What is your character called? ")
@@ -99,11 +97,6 @@ print(f"{name} says, 'Thanks for creating me!'")
 <script type="module">
   import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.mjs";
 
-  let pyodide;
-  const runBtn = document.getElementById("runBtn");
-  const output = document.getElementById("output");
-
-  // Your fixed Python script
   const code = `
 print("Create a character!")
 name = input("What is your character called? ")
@@ -117,34 +110,39 @@ print(f"Weaknesses: {weaknesses}.")
 print(f"{name} says, 'Thanks for creating me!'")
 `;
 
-  async function main() {
+  const runBtn = document.getElementById("runBtn");
+  const output = document.getElementById("output");
+  let pyodide;
+
+  async function initPyodide() {
     output.textContent = "Loading Python environment...";
     pyodide = await loadPyodide();
-    output.textContent = "Python ready! Click 'Run Code' to start.";
     runBtn.textContent = "Run Code";
     runBtn.disabled = false;
+    output.textContent = "Python ready! Click 'Run Code' to start.";
   }
 
   runBtn.addEventListener("click", async () => {
     output.textContent = "";
     try {
-      // capture output cleanly
       pyodide.setStdout({ write: s => output.textContent += s });
       pyodide.setStderr({ write: s => output.textContent += s });
+
+      // Hook for Python's input()
       pyodide.setStdin({
         readline() {
-          return prompt("Input required:");
+          const userInput = prompt("Input required:");
+          return userInput === null ? "" : userInput;
         }
       });
 
-      // use runPython (not runPythonAsync) to prevent numeric return artifacts
       await pyodide.runPythonAsync(code);
     } catch (err) {
       output.textContent += "\nError:\n" + err;
     }
   });
 
-  main();
+  initPyodide();
 </script>
 
 </body>
